@@ -156,3 +156,19 @@ void portA_init()
   GPIO_PORTA_DEN_R |= 0xF0;
   GPIO_PORTA_DIR_R |= 0xF0;
 }
+
+//ziad
+void light_up(uint32_t led)
+{
+    GPIO_PORTF_DATA_R |= led;
+}
+
+void light_down(uint32_t led)
+{
+    GPIO_PORTF_DATA_R &= !led;
+}
+
+void lights_off()
+{
+    GPIO_PORTF_DATA_R &= (!Blue && !Green && !Red);
+}
