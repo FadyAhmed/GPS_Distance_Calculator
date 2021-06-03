@@ -172,3 +172,12 @@ void lights_off()
 {
     GPIO_PORTF_DATA_R &= (!Blue && !Green && !Red);
 }
+
+// systick init
+void systick_init(void)
+{
+    NVIC_ST_CTRL_R = 0;
+    NVIC_ST_RELOAD_R = 0x00FFFFF;
+    NVIC_ST_CURRENT_R = 0;
+    NVIC_ST_CTRL_R = 0x5; // enable & clock source (101)
+}
