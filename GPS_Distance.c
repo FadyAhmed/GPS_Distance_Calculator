@@ -213,3 +213,33 @@ void systick_wait_free_ms(uint32_t delay)
     }
     systick_wait_ms(delay);
 }
+double distance_between_points(double longitude1, double latitude1, double longitude2, double latitude2)
+{
+    double latitudeRadian1; // to radians
+    double latitudeRadian2;
+    double deltaLatitude;
+    double deltaLongitude;
+
+    double a;
+    double c;
+    double d;
+
+    longitude1 = angel_to_decimal(longitude1);
+    longitude2 = angel_to_decimal(longitude2);
+    latitude1 = angel_to_decimal(latitude1);
+    latitude2 = angel_to_decimal(latitude2);
+
+    latitudeRadian1 = latitude1 * PI / 180; // to radians
+    latitudeRadian2 = latitude2 * PI / 180;
+    deltaLatitude = (latitude2 - latitude1) * PI / 180;
+    deltaLongitude = (longitude2 - longitude1) * PI / 180;
+
+    a = sin(deltaLatitude / 2) * sin(deltaLatitude / 2) +
+        cos(latitudeRadian1) * cos(latitudeRadian2) *
+            sin(deltaLongitude / 2) * sin(deltaLongitude / 2);
+    c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    d = R * c; // in meter
+
+    return d;
+}
