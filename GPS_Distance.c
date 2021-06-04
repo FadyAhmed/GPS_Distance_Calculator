@@ -213,6 +213,12 @@ void systick_wait_free_ms(uint32_t delay)
     }
     systick_wait_ms(delay);
 }
+//this function checks if final destination reached or not
+bool is_final_destination(double distance)
+{
+    return distance >= RequiredDistance;
+}
+//this function calculates the distance between two points
 double distance_between_points(double longitude1, double latitude1, double longitude2, double latitude2)
 {
     double latitudeRadian1; // to radians
