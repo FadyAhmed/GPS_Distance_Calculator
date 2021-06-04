@@ -173,6 +173,18 @@ void lights_off()
     GPIO_PORTF_DATA_R &= (!Blue && !Green && !Red);
 }
 
+void switch_led(uint32_t led)
+{
+    if ((GPIO_PORTF_DATA_R &= led) == led)
+    {
+        light_down(led);
+    }
+    else
+    {
+        light_up(led);
+    }
+}
+
 // systick init
 void systick_init(void)
 {
