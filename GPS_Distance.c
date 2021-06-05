@@ -17,6 +17,7 @@
 #define RequiredDistance 100
 #define PortF_switches 0x11
 #define Delay 2000 //ms
+#define R 6371e3
 
 // functions proto type
 int read_current_coordinates(double *longitude, double *latitude);
@@ -285,4 +286,13 @@ void dummy_seven_segments(int d3, int d2, int d1)
   seven_segments_display(d1, 1);
   seven_segments_display(d2, 10);
   seven_segments_display(d3, 100);
+}
+
+double angel_to_decimal(double nmea)
+{
+    int degrees = (int)(nmea / 100);
+    double minutes = nmea - (degrees * 100);
+    double dec = degrees + (minutes / 60);
+
+    return dec;
 }
