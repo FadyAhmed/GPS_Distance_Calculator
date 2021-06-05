@@ -280,7 +280,7 @@ void double_to_three_digits(double number, uint32_t *d1, uint32_t *d2, uint32_t 
   *d1 = (uint32_t)(number / 100) % 10;
 }
 
-void dummy_seven_segments(int d1, int d2, int d3)
+void dummy_seven_segments(int d3, int d2, int d1)
 {
   seven_segments_display(d1, 1);
   seven_segments_display(d2, 10);
