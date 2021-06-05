@@ -249,3 +249,40 @@ double distance_between_points(double longitude1, double latitude1, double longi
 
     return d;
 }
+
+void seven_segments_display(uint32_t number, uint32_t digit)
+{
+  // E0,1,2,3
+  if (digit == 1)
+  {
+    GPIO_PORTE_DATA_R &= 0xF0;
+    GPIO_PORTE_DATA_R |= number;
+  }
+  else if (digit == 10)
+  {
+    //D0,1,2,3
+    GPIO_PORTD_DATA_R &= 0xF0;
+    GPIO_PORTD_DATA_R |= number;
+  }
+  else if (digit == 100)
+  {
+    // A4,5,6,7
+    GPIO_PORTA_DATA_R &= 0x0F;
+    number = number << 4;
+    GPIO_PORTA_DATA_R |= number;
+  }
+}
+
+void double_to_three_digits(double number, uint32_t *d1, uint32_t *d2, uint32_t *d3)
+{
+  *d3 = (uint32_t)(number) % 10;
+  *d2 = (uint32_t)(number / 10) % 10;
+  *d1 = (uint32_t)(number / 100) % 10;
+}
+
+void dummy_seven_segments(int d1, int d2, int d3)
+{
+  seven_segments_display(d1, 1);
+  seven_segments_display(d2, 10);
+  seven_segments_display(d3, 100);
+}
