@@ -150,13 +150,12 @@ void portE_init()
 
   while ((SYSCTL_PRGPIO_R & 0x10) == 0)
   {
-  } //wait for portB to be activated
+  } //wait for portE to be activated
 
-  /* UART5 TX5 and RX5 use PE4 and PE5. Configure them digital and enable alternate function */
-  GPIO_PORTE_DEN_R |= 0x0F; /* set PE4 and PE5 as digital */
-  GPIO_PORTE_AFSEL_R |= 0;  /* Use PE4,PE5 alternate function */
-  GPIO_PORTE_AMSEL_R |= 0;  /* Turn off analg function*/
-  GPIO_PORTE_PCTL_R |= 0;   /* configure PE4 and PE5 for UART */
+  GPIO_PORTE_DEN_R |= 0x0F;
+  GPIO_PORTE_AFSEL_R |= 0;
+  GPIO_PORTE_AMSEL_R |= 0;
+  GPIO_PORTE_PCTL_R |= 0;
   GPIO_PORTE_DEN_R |= 0x0F;
   GPIO_PORTE_DIR_R |= 0x0F;
 }
@@ -323,4 +322,76 @@ double angel_to_decimal(double nmea)
     double dec = degrees + (minutes / 60);
 
     return dec;
+}
+
+bool is_gps_ready()
+{
+  int i = 0;
+
+  char t = get_next_char();
+  while (t != '$')
+  {
+    t = get_next_char();
+  }
+  if (t == '$')
+  {
+    t = get_next_char();
+    while (t != 'G')
+    {
+      t = get_next_char();
+    }
+    if (t == 'G')
+    {
+      t = get_next_char();
+      while (t != 'P')
+      {
+        t = get_next_char();
+      }
+      if (t == 'P')
+      {
+        t = get_next_char();
+        while (t != 'G')
+        {
+          t = get_next_char();
+        }
+        if (t == 'G')
+        {
+          t = get_next_char();
+          while (t != 'L')
+          {
+            t = get_next_char();
+          }
+          if (t == 'L')
+          {
+            t = get_next_char();
+            if (t == 'L')
+            {
+              while (t != 'L')
+              {
+                t = get_next_char();
+              }
+              t = get_next_char();
+              while (t != ',')
+              {
+                t = get_next_char();
+              }
+              if (t == ',')
+              {
+                t = get_next_char();
+                if (t == ',')
+                {
+                  return false;
+                }
+                else
+                {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
 }
