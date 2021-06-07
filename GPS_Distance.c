@@ -18,6 +18,11 @@
 #define PortF_switches 0x11
 #define Delay 2000 //ms
 #define R 6371e3
+#define Tolerance 2
+
+int stringLength = 0;
+int coordinatesIndex = 0;
+char final_coordinates[1000][23];
 
 // functions proto type
 int read_current_coordinates(double *longitude, double *latitude);
@@ -41,7 +46,11 @@ void portE_init();
 void portD_init();
 void portA_init();
 void systick_init();
+void UART5_Init();
+void UART1_Init();
+
 void initialize_ports();
+
 
 void SystemInit(void) {}
 
@@ -52,6 +61,8 @@ void initialize_ports()
     portD_init();
     portA_init();
     systick_init();
+    UART5_Init();
+    UART1_Init();
 }
 
 int main()
@@ -60,6 +71,11 @@ int main()
     uint32_t digit1 = 0;
     uint32_t digit2 = 0;
     uint32_t digit3 = 0;
+    double longitude1 = 0;
+    double latitude1 = 0;
+    double longitude2 = 0;
+    double latitude2 = 0;
+    char s[16] = {0};
 
     initialize_ports();
 
@@ -75,12 +91,24 @@ int main()
     }
     light_down(Blue);
 
+    read_current_coordinates(&longitude1, &latitude1);
+		sprintf(s, "%f", distance);
+		print_it(s, 6);
+		serial_send('\n');
     // calculating distance
     while (1)
     {
+        int print_coor_index = 0;
+        read_current_coordinates(&longitude2, &latitude2);
         distance += distance_between_points(0, 0, 0, 0); // this fn returns 1 as dummy distance
-        double_to_three_digits(distance, &digit1, &digit2, &digit3);
+        longitude1 = longitude2;
+        latitude1 = latitude2;
 
+        sprintf(s, "%f", distance);
+        print_it(s, 6);
+        serial_send('\n');
+
+        double_to_three_digits(distance, &digit1, &digit2, &digit3);
         // printing
         seven_segments_display(digit3, 1);
         seven_segments_display(digit2, 10);
