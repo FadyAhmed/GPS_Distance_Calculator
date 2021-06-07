@@ -395,3 +395,24 @@ bool is_gps_ready()
   }
   return false;
 }
+
+// ziad
+void UART1_Init()
+{
+    SYSCTL_RCGCUART_R |= 0x0002;
+    while ((SYSCTL_RCGCUART_R & 0x02) == 0)
+    {
+    } //wait for UART1 to be activated
+    UART1_CTL_R &= ~0x0001; // disable UART1
+    UART1_IBRD_R = 104;
+    UART1_FBRD_R = 11;
+    UART1_LCRH_R = 0x0070;
+    UART1_CTL_R = 0x0301;
+
+    GPIO_PORTB_LOCK_R = 0x4C4F434B;
+    GPIO_PORTB_CR_R = 0xFF;
+    GPIO_PORTB_AFSEL_R |= 0x03;
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xFFFFFF00) + 0x00000011;
+    GPIO_PORTB_AMSEL_R &= ~0x03;
+    GPIO_PORTB_DEN_R = 0xFF;
+}
