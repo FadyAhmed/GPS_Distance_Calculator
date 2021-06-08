@@ -437,3 +437,22 @@ void UART5_Init(){
     GPIO_PORTE_AMSEL_R |= 0;
     GPIO_PORTE_PCTL_R |= 0x00110000;
 }
+
+// ziad
+char get_next_char()
+{
+    char string[204] = "$GPGLL,3017.32780,N,03143.54992,E,174810.00,A,A*6F\n$GPGLL,3017.32722,N,03143.54938,E,174809.00,A,A*6F";
+    if (stringLength == 203)
+    {
+        stringLength = 0;
+    }
+    return string[stringLength++];
+    // char data;
+    // while ((UART1_FR_R & 0x10) != 0)
+    // {
+    // }
+    // data = UART1_DR_R;
+    // //	serial_send(data);
+
+    // return (unsigned char)data;
+}
