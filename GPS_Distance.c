@@ -472,3 +472,11 @@ int read_current_coordinates(double *longitude, double *latitude)
   parse_coor(longitude, latitude);
   return 0;
 }
+void print_it(char s[], int length)
+{
+    int i = 0;
+    for (i; i < length; i++)
+    {
+        serial_send(s[i]);
+    }
+}
