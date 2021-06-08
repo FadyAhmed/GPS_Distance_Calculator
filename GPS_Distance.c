@@ -416,3 +416,24 @@ void UART1_Init()
     GPIO_PORTB_AMSEL_R &= ~0x03;
     GPIO_PORTB_DEN_R = 0xFF;
 }
+//UART5 Initialization
+void UART5_Init(){
+    SYSCTL_RCGCUART_R |= 0x20; /* enable clock to UART5 */
+    while ((SYSCTL_RCGCUART_R & 0x20) == 0)
+    {
+    } //wait for UART5 to be activated
+     /* UART5 initialization */
+    UART5_CTL_R = 0;// disable UART5
+    UART5_IBRD_R = 104;
+    UART5_FBRD_R = 11;
+    UART5_CC_R = 0;
+    UART5_LCRH_R = 0x60;
+    UART5_CTL_R = 0x301;
+
+    GPIO_PORTE_PCTL_R |= 0x00110000;
+    GPIO_PORTE_DEN_R |= 0x30;
+    GPIO_PORTE_DEN_R |= 0x30;
+    GPIO_PORTE_AFSEL_R |= 0x30;
+    GPIO_PORTE_AMSEL_R |= 0;
+    GPIO_PORTE_PCTL_R |= 0x00110000;
+}
