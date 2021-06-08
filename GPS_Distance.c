@@ -472,6 +472,12 @@ int read_current_coordinates(double *longitude, double *latitude)
   parse_coor(longitude, latitude);
   return 0;
 }
+void serial_send(char data)
+{
+    while ((UART5_FR_R & 0x20) != 0)
+        ;              /* wait until Tx buffer not full */
+    UART5_DR_R = data; /* before giving it another byte */
+}
 
 void print_it(char s[], int length)
 {
