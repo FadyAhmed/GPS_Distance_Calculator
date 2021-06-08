@@ -456,3 +456,19 @@ char get_next_char()
 
     // return (unsigned char)data;
 }
+
+int read_current_coordinates(double *longitude, double *latitude)
+{
+  while (
+      get_next_char() != '$' ||
+      get_next_char() != 'G' ||
+      get_next_char() != 'P' ||
+      get_next_char() != 'G' ||
+      get_next_char() != 'L' ||
+      get_next_char() != 'L')
+  {
+    continue;
+  }
+  parse_coor(longitude, latitude);
+  return 0;
+}
