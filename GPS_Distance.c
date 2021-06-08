@@ -472,11 +472,85 @@ int read_current_coordinates(double *longitude, double *latitude)
   parse_coor(longitude, latitude);
   return 0;
 }
+
 void print_it(char s[], int length)
 {
     int i = 0;
     for (i; i < length; i++)
     {
         serial_send(s[i]);
+    }
+}
+
+// ziad
+int parse_coor(double *longitude, double *latitude)
+{
+    int j = 0;
+    double multiblier = 1000;
+    char t = get_next_char();
+
+    while (t != ',')
+    {
+        t = get_next_char();
+    }
+    if (t == ',')
+    {
+        t = get_next_char();
+        if (t == ',')
+        {
+            return 0;
+        }
+        *longitude = 0;
+        while (t != ',')
+        {
+            final_coordinates[coordinatesIndex][j++] = t;
+            serial_send(t);
+            *longitude += ((int)(t - '0')) * multiblier;
+            multiblier = multiblier / 10;
+            t = get_next_char();
+            if (t == '.')
+            {
+                final_coordinates[coordinatesIndex][j++] = t;
+                serial_send(t);
+                t = get_next_char();
+                continue;
+            }
+        }
+        final_coordinates[coordinatesIndex][j++] = ',';
+        serial_send(',');
+
+        multiblier = 10000;
+        t = get_next_char();
+        t = get_next_char();
+
+        if (t == ',')
+        {
+            t = get_next_char();
+            if (t == ',')
+            {
+                return 0;
+            }
+            *latitude = 0;
+            serial_send(t);
+            while (t != ',')
+            {
+                final_coordinates[coordinatesIndex][j++] = t;
+                serial_send(t);
+                *latitude += ((int)(t - '0')) * multiblier;
+                multiblier = multiblier / 10;
+                t = get_next_char();
+                if (t == '.')
+                {
+                    serial_send(t);
+                    final_coordinates[coordinatesIndex][j++] = t;
+                    t = get_next_char();
+                    continue;
+                }
+            }
+            final_coordinates[coordinatesIndex][j++] = ',';
+            coordinatesIndex = (coordinatesIndex + 1) % 1000;
+            serial_send(',');
+            return 0;
+        }
     }
 }
