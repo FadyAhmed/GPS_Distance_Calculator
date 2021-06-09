@@ -1,11 +1,8 @@
-
 #include <tm4c123gh6pm.h>
+
 #include "stdint.h"
 #include <stdbool.h>
-#include <stdlib.h>
 #include <math.h>
-#include <ctype.h>
-#include <string.h>
 #include <stdio.h>
 
 #define Red 0x02
@@ -14,14 +11,17 @@
 #define Clock 16000000
 
 #define PI 3.141592654
-#define RequiredDistance 100
+#define RequiredDistance 230
 #define PortF_switches 0x11
-#define Delay 2000 //ms
+#define Delay 4000 //ms
 #define R 6371e3
 #define Tolerance 2
 
-int stringLength = 0;
+// iterator for testing only
+// int stringLength = 0;
+// array and index to save coordinates to the end of each trip
 int coordinatesIndex = 0;
+// saves 1000 read each has 23 charachter
 char final_coordinates[1000][23];
 
 // functions proto type
@@ -40,16 +40,17 @@ void serial_send(char data);
 void print_it(char s[], int length);
 bool is_gps_ready(void);
 double angel_to_decimal(double angel);
+int parse_coor(double *longitude, double *latitude);
 
-void portF_init();
-void portE_init();
-void portD_init();
-void portA_init();
-void systick_init();
-void UART5_Init();
-void UART1_Init();
+void portF_init(void);
+void portE_init(void);
+void portD_init(void);
+void portA_init(void);
+void systick_init(void);
+void UART5_Init(void);
+void UART1_Init(void);
 
-void initialize_ports();
+void initialize_ports(void);
 
 
 void SystemInit(void) {}
@@ -84,7 +85,16 @@ int main()
     seven_segments_display(0, 10);
     seven_segments_display(0, 100);
 
-    // idle case
+    // wait gps to reach a fix
+    while (!is_gps_ready())
+    {
+        light_up(Blue);
+        systick_wait_free_ms(50);
+        light_down(Blue);
+        systick_wait_free_ms(50);
+    }
+
+    // idle case (gps is ready)
     while ((GPIO_PORTF_DATA_R & PortF_switches) != 0x10) //push switch 2 to start calculating
     {
         light_up(Blue);
@@ -92,6 +102,7 @@ int main()
     light_down(Blue);
 
     read_current_coordinates(&longitude1, &latitude1);
+
 		sprintf(s, "%f", distance);
 		print_it(s, 6);
 		serial_send('\n');
@@ -115,13 +126,26 @@ int main()
         seven_segments_display(digit1, 100);
 
         switch_led(Green);
+               // when distance reached
         if (is_final_destination(distance))
         {
-            lights_off();
+            light_down(Green);
             light_up(Red);
-            return 0;
+            //send data to UART5
+            // wait user to push switch 1
+					while(1){
+            while ((GPIO_PORTF_DATA_R & PortF_switches) != 0x01)
+            {
+            }
+            for (print_coor_index = 0; print_coor_index < coordinatesIndex; print_coor_index++)
+            {
+                print_it(final_coordinates[print_coor_index], 23);
+								print_it(s, 6);
+								serial_send('\n');
+            }}
+            break;
         }
-        systick_wait_free_ms(10);
+        systick_wait_free_ms(Delay);
     }
 }
 
@@ -326,8 +350,6 @@ double angel_to_decimal(double nmea)
 
 bool is_gps_ready()
 {
-  int i = 0;
-
   char t = get_next_char();
   while (t != '$')
   {
@@ -441,20 +463,20 @@ void UART5_Init(){
 // ziad
 char get_next_char()
 {
-    char string[204] = "$GPGLL,3017.32780,N,03143.54992,E,174810.00,A,A*6F\n$GPGLL,3017.32722,N,03143.54938,E,174809.00,A,A*6F";
-    if (stringLength == 203)
-    {
-        stringLength = 0;
-    }
-    return string[stringLength++];
-    // char data;
-    // while ((UART1_FR_R & 0x10) != 0)
+    // char string[204] = "$GPGLL,3017.32780,N,03143.54992,E,174810.00,A,A*6F\n$GPGLL,3017.32722,N,03143.54938,E,174809.00,A,A*6F";
+    // if (stringLength == 203)
     // {
+    //     stringLength = 0;
     // }
-    // data = UART1_DR_R;
-    // //	serial_send(data);
+    // return string[stringLength++];
+    char data;
+    while ((UART1_FR_R & 0x10) != 0)
+    {
+    }
+    data = UART1_DR_R;
+    //	serial_send(data);
 
-    // return (unsigned char)data;
+    return (unsigned char)data;
 }
 
 int read_current_coordinates(double *longitude, double *latitude)
