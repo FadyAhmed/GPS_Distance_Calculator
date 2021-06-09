@@ -29,7 +29,7 @@ int read_current_coordinates(double *longitude, double *latitude);
 void seven_segments_display(uint32_t number, uint32_t digit);
 void double_to_three_digits(double number, uint32_t *d1, uint32_t *d2, uint32_t *d3);
 bool is_final_destination(double distance);
-double distance_between_points(double longitude1, double latitude1, double longitude2, double latitude2);
+double displacment_between_two_points(double longitude1, double latitude1, double longitude2, double latitude2);
 void light_up(uint32_t led);
 void light_down(uint32_t led);
 void lights_off(void);
@@ -39,7 +39,7 @@ char get_next_char(void);
 void serial_send(char data);
 void print_it(char s[], int length);
 bool is_gps_ready(void);
-double angel_to_decimal(double angel);
+double angle_to_degree(double angel);
 int parse_coor(double *longitude, double *latitude);
 
 void portF_init(void);
@@ -111,7 +111,7 @@ int main()
     {
         int print_coor_index = 0;
         read_current_coordinates(&longitude2, &latitude2);
-        distance += distance_between_points(0, 0, 0, 0); // this fn returns 1 as dummy distance
+        distance += displacment_between_two_points(0, 0, 0, 0); // this fn returns 1 as dummy distance
         longitude1 = longitude2;
         latitude1 = latitude2;
 
@@ -268,10 +268,12 @@ void systick_wait_free_ms(uint32_t delay)
 //this function checks if final destination reached or not
 bool is_final_destination(double distance)
 {
-    return distance >= RequiredDistance;
+    double error = RequiredDistance * Tolerance / 100;
+    return  (distance >= (RequiredDistance - error));
 }
-//this function calculates the distance between two points
-double distance_between_points(double longitude1, double latitude1, double longitude2, double latitude2)
+// this function calculates the distance between two points
+// using haversine formula
+double displacment_between_two_points(double longitude1, double latitude1, double longitude2, double latitude2)
 {
     double latitudeRadian1; // to radians
     double latitudeRadian2;
@@ -282,10 +284,10 @@ double distance_between_points(double longitude1, double latitude1, double longi
     double c;
     double d;
 
-    longitude1 = angel_to_decimal(longitude1);
-    longitude2 = angel_to_decimal(longitude2);
-    latitude1 = angel_to_decimal(latitude1);
-    latitude2 = angel_to_decimal(latitude2);
+    longitude1 = angle_to_degree(longitude1);
+    longitude2 = angle_to_degree(longitude2);
+    latitude1 = angle_to_degree(latitude1);
+    latitude2 = angle_to_degree(latitude2);
 
     latitudeRadian1 = latitude1 * PI / 180; // to radians
     latitudeRadian2 = latitude2 * PI / 180;
@@ -339,7 +341,7 @@ void dummy_seven_segments(int d3, int d2, int d1)
   seven_segments_display(d3, 100);
 }
 
-double angel_to_decimal(double nmea)
+double angle_to_degree(double nmea)
 {
     int degrees = (int)(nmea / 100);
     double minutes = nmea - (degrees * 100);
