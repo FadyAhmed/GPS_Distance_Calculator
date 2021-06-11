@@ -352,70 +352,24 @@ double angle_to_degree(double nmea)
 
 bool is_gps_ready()
 {
-  char t = get_next_char();
-  while (t != '$')
+    char fix;
+		int i =0;
+    if(
+      get_next_char() == '$' &&
+      get_next_char() == 'G' &&
+      get_next_char() == 'P' &&
+      get_next_char() == 'G' &&
+      get_next_char() == 'G' &&
+      get_next_char() == 'A' &&
+      get_next_char() == ',')
   {
-    t = get_next_char();
-  }
-  if (t == '$')
-  {
-    t = get_next_char();
-    while (t != 'G')
-    {
-      t = get_next_char();
-    }
-    if (t == 'G')
-    {
-      t = get_next_char();
-      while (t != 'P')
-      {
-        t = get_next_char();
-      }
-      if (t == 'P')
-      {
-        t = get_next_char();
-        while (t != 'G')
-        {
-          t = get_next_char();
-        }
-        if (t == 'G')
-        {
-          t = get_next_char();
-          while (t != 'L')
-          {
-            t = get_next_char();
-          }
-          if (t == 'L')
-          {
-            t = get_next_char();
-            if (t == 'L')
-            {
-              while (t != 'L')
-              {
-                t = get_next_char();
-              }
-              t = get_next_char();
-              while (t != ',')
-              {
-                t = get_next_char();
-              }
-              if (t == ',')
-              {
-                t = get_next_char();
-                if (t == ',')
-                {
-                  return false;
-                }
-                else
-                {
-                  return true;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+		if(get_next_char()==',') return false;
+    for(i = 1; i <= 36;i++){
+			get_next_char();
+		}
+		fix = get_next_char();
+		if(fix == '1'||fix=='2') return true;
+		else return false;
   }
   return false;
 }
@@ -423,6 +377,10 @@ bool is_gps_ready()
 // ziad
 void UART1_Init()
 {
+  	SYSCTL_RCGCGPIO_R |= 0x0002; 
+		while ((SYSCTL_PRGPIO_R & 0x02) == 0)
+    {
+    }
     SYSCTL_RCGCUART_R |= 0x0002;
     while ((SYSCTL_RCGCUART_R & 0x02) == 0)
     {
