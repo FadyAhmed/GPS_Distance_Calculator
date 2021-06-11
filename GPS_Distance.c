@@ -247,7 +247,7 @@ void systick_init(void)
 }
 void systick_wait_ms(uint32_t delay)
 {
-    delay = delay * Clock / 100;
+    delay = delay * Clock;
     NVIC_ST_RELOAD_R = delay - 1; // sub 1 because count flag raise after reaching zero by 1 clock
     NVIC_ST_CURRENT_R = 0;        // this line clears: count flag and current value
     while ((NVIC_ST_CTRL_R & 0x10000) == 0)
