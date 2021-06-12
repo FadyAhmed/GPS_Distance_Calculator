@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="leaflet.css" />
+  <link rel="stylesheet" href="main.css" />
+  <script src="leaflet.js"></script>
+  <style>
+
+  </style>
+  <title>My Track</title>
+</head>
+
+<body>
+
+  <div id="distance">Distance: <span>0</span> m</div>
+  <div id="mymap"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+
+
+    const mymap = L.map('mymap');
+    mymap.setView([30.0463, 31.2486], 10);
+
+    const attribution =
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(mymap);
+
+    var socket = io();
+
+    socket.on('new coordinate', function (data) {
+      mymap.setView([data.lon, data.lat], 18);
+      L.marker([data.lon, data.lat]).addTo(mymap);
+      document.querySelector("#distance span").textContent = data.dist;
+    });
+
+
+  // function changeValue(element, value) {
+  //   element.style.transition = "all 0.05s";
+  //   element.style.opacity = "0";
+  //   setTimeout(() => {
+  //     element.textContent = value;
+  //     element.style.opacity = "1";
+  //   }, 50);
+  // }
+  </script>
+</body>
+
+</html>

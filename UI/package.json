@@ -1,0 +1,31 @@
+{
+  "name": "track-drawer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "open": "^8.2.0",
+    "serialport": "^9.1.0",
+    "socket.io": "^4.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "pkg": {
+    "assets": [
+      "index.html",
+      "public"
+    ],
+    "targets": [
+      "host"
+    ],
+    "outputPath": "dist"
+  },
+  "bin": "app.js"
+}

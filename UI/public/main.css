@@ -1,0 +1,25 @@
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  margin: 0;
+  padding: 0
+}
+
+#mymap {
+  height: 100vh;
+}
+#distance {
+  z-index: 999999999999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 30px;
+  background-color: aquamarine;
+  color: black;
+  padding: 10px 30px;
+}
+#distance span {
+  color: rgb(107, 12, 12);
+  transition: all .05s;
+}
