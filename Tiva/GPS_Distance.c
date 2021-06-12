@@ -1,4 +1,4 @@
-#include <tm4c123gh6pm.h>
+#include "tm4c123gh6pm.h"
 
 #include "stdint.h"
 #include <stdbool.h>
@@ -409,7 +409,7 @@ void UART5_Init(){
     UART5_IBRD_R = 104;
     UART5_FBRD_R = 11;
     UART5_CC_R = 0;
-    UART5_LCRH_R = 0x60;
+    UART5_LCRH_R = 0x70;
     UART5_CTL_R = 0x301;
 
     GPIO_PORTE_PCTL_R |= 0x00110000;
